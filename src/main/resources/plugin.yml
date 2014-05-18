@@ -1,0 +1,9 @@
+name: DungeonChest
+author: Rellynn
+main: me.rellynn.dungeon.DungeonPlugin
+version: 1.0.1
+startup: POSTWORLD
+commands:
+  dc:
+    usage: /dc help
+    aliases: [dch, dungeon, chest, dungeonchest]
