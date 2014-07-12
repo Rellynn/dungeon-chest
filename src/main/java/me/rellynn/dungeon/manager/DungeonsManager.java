@@ -23,81 +23,71 @@ public class DungeonsManager {
     protected static File file;
 
     static {
-        chests = new ArrayList<Dungeon>();
-        file = new File(DungeonPlugin.instance.getDataFolder(), "chests.yml");
-        config = YamlConfiguration.loadConfiguration(file);
+	DungeonsManager.chests = new ArrayList<>();
+	DungeonsManager.file = new File(DungeonPlugin.instance.getDataFolder(), "chests.yml");
+	DungeonsManager.config = YamlConfiguration.loadConfiguration(DungeonsManager.file);
+    }
+
+    public static boolean add(final Dungeon e) {
+	return DungeonsManager.chests.add(e);
+    }
+
+    public static Dungeon find(final int id) {
+	for (final Dungeon e : DungeonsManager.chests)
+	    if (e.getId() == id) return e;
+	return null;
+    }
+
+    public static Dungeon find(final Location location) {
+	for (final Dungeon e : DungeonsManager.chests)
+	    if (e.getLocation().equals(location)) return e;
+	return null;
     }
 
     public static List<Dungeon> findAll() {
-        if (chests.isEmpty()) {
-            Set<String> keys = config.getKeys(false);
-            for (String key : keys) {
-                ConfigurationSection section = config.getConfigurationSection(key);
-                List<ItemStack> items = new ArrayList<ItemStack>();
-                String[] locations = section.getString("location").split("_");
-                ConfigurationSection section2 = section.getConfigurationSection("items");
-                Set<String> keys2 = section2.getKeys(false);
-                for (String key2 : keys2) {
-                    items.add(section2.getItemStack(key2));
-                }
-                chests.add(new Dungeon(section.getInt("id"), State.NORMAL, items, section.getInt("size"), new Location(Bukkit.getWorld(locations[0]), Integer.parseInt(locations[1]), Integer.parseInt(locations[2]), Integer.parseInt(locations[3])), section.getLong("delay")));
-                config.set(key, null);
-            }
-            try {
-                config.save(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return chests;
+	if (DungeonsManager.chests.isEmpty()) {
+	    final Set<String> keys = DungeonsManager.config.getKeys(false);
+	    for (final String key : keys) {
+		final ConfigurationSection section = DungeonsManager.config.getConfigurationSection(key);
+		final List<ItemStack> items = new ArrayList<ItemStack>();
+		final String[] locations = section.getString("location").split("_");
+		final ConfigurationSection section2 = section.getConfigurationSection("items");
+		final Set<String> keys2 = section2.getKeys(false);
+		for (final String key2 : keys2)
+		    items.add(section2.getItemStack(key2));
+		DungeonsManager.chests.add(new Dungeon(section.getInt("id"), State.NORMAL, items, section.getInt("size"), new Location(Bukkit.getWorld(locations[0]), Integer.parseInt(locations[1]), Integer.parseInt(locations[2]), Integer.parseInt(locations[3])), section.getLong("delay")));
+		DungeonsManager.config.set(key, null);
+	    }
+	    try {
+		DungeonsManager.config.save(DungeonsManager.file);
+	    } catch (final IOException e) {
+		e.printStackTrace();
+	    }
+	}
+	return DungeonsManager.chests;
     }
 
-    public static Dungeon find(int id) {
-        for (Dungeon e : chests) {
-            if (e.getId() == id) {
-                return e;
-            }
-        }
-        return null;
-    }
-
-    public static Dungeon find(Location location) {
-        for (Dungeon e : chests) {
-            if (e.getLocation().equals(location)) {
-                return e;
-            }
-        }
-        return null;
-    }
-
-    public static boolean remove(int id) {
-        Dungeon e = find(id);
-        if (e != null) {
-            return chests.remove(e);
-        }
-        return false;
+    public static boolean remove(final int id) {
+	final Dungeon e = DungeonsManager.find(id);
+	if (e != null) return DungeonsManager.chests.remove(e);
+	return false;
     }
 
     public static void saveAll() {
-        for (int i = 0; i < chests.size(); i++) {
-            Dungeon dungeon = chests.get(i);
-            Location location = dungeon.getLocation();
-            config.set(i + ".id", dungeon.getId());
-            config.set(i + ".location", location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ());
-            config.set(i + ".size", dungeon.getSize());
-            config.set(i + ".delay", dungeon.getDelay());
-            for (int j = 0, c = dungeon.getItems().size(); j < c; j++) {
-                config.set(i + ".items." + j, dungeon.getItems().get(j));
-            }
-        }
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static boolean add(Dungeon e) {
-        return chests.add(e);
+	for (int i = 0; i < DungeonsManager.chests.size(); i++) {
+	    final Dungeon dungeon = DungeonsManager.chests.get(i);
+	    final Location location = dungeon.getLocation();
+	    DungeonsManager.config.set(i + ".id", dungeon.getId());
+	    DungeonsManager.config.set(i + ".location", location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ());
+	    DungeonsManager.config.set(i + ".size", dungeon.getSize());
+	    DungeonsManager.config.set(i + ".delay", dungeon.getDelay());
+	    for (int j = 0, c = dungeon.getItems().size(); j < c; j++)
+		DungeonsManager.config.set(i + ".items." + j, dungeon.getItems().get(j));
+	}
+	try {
+	    DungeonsManager.config.save(DungeonsManager.file);
+	} catch (final IOException e) {
+	    e.printStackTrace();
+	}
     }
 }

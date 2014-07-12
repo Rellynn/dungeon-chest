@@ -21,35 +21,32 @@ public class DungeonPlugin extends JavaPlugin {
     public static DungeonPlugin instance;
 
     @Override
-    public void onEnable() {
-        instance = this;
-        for (Dungeon dungeon : DungeonsManager.findAll()) {
-            new ChestTask(dungeon, 1L);
-        }
-        registerCommands();
-        getCommand("dc").setExecutor(new CommandsManager());
-        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+    public void onDisable() {
+	for (final Dungeon dungeon : DungeonsManager.findAll()) {
+	    final Block block = dungeon.getLocation().getBlock();
+	    if (block.getState() instanceof Chest) ((Chest) block.getState()).getInventory().clear();
+	    dungeon.getLocation().getBlock().setType(Material.AIR);
+	}
+	DungeonsManager.saveAll();
     }
 
     @Override
-    public void onDisable() {
-        for (Dungeon dungeon : DungeonsManager.findAll()) {
-            Block block = dungeon.getLocation().getBlock();
-            if (block.getState() instanceof Chest) {
-                ((Chest) block.getState()).getInventory().clear();
-            }
-            dungeon.getLocation().getBlock().setType(Material.AIR);
-        }
-        DungeonsManager.saveAll();
+    public void onEnable() {
+	DungeonPlugin.instance = this;
+	for (final Dungeon dungeon : DungeonsManager.findAll())
+	    new ChestTask(dungeon, 1L);
+	this.registerCommands();
+	this.getCommand("dc").setExecutor(new CommandsManager());
+	this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
     }
 
     private void registerCommands() {
-        CommandsManager.add(new CallCommand());
-        CommandsManager.add(new CancelCommand());
-        CommandsManager.add(new DeleteCommand());
-        CommandsManager.add(new HelpCommand());
-        CommandsManager.add(new InfoCommand());
-        CommandsManager.add(new NewCommand());
-        CommandsManager.add(new TimeresetCommand());
+	CommandsManager.add(new CallCommand());
+	CommandsManager.add(new CancelCommand());
+	CommandsManager.add(new DeleteCommand());
+	CommandsManager.add(new HelpCommand());
+	CommandsManager.add(new InfoCommand());
+	CommandsManager.add(new NewCommand());
+	CommandsManager.add(new TimeresetCommand());
     }
 }

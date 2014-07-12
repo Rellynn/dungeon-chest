@@ -8,44 +8,44 @@ public abstract class Command {
     protected String usage;
     protected String description;
 
-    public Command(String name, String permission, String usage, String description) {
-        this.name = name;
-        this.permission = permission;
-        this.usage = usage;
-        this.description = description;
+    public Command(final String name, final String permission, final String usage, final String description) {
+	this.name = name;
+	this.permission = permission;
+	this.usage = usage;
+	this.description = description;
     }
 
     public abstract boolean execute(Player player, String[] args);
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+	return this.description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getName() {
+	return this.name;
     }
 
     public String getPermission() {
-        return permission;
-    }
-
-    public void setPermission(String permission) {
-        this.permission = permission;
+	return this.permission;
     }
 
     public String getUsage() {
-        return usage;
+	return this.usage;
     }
 
-    public void setUsage(String usage) {
-        this.usage = usage;
+    public void setDescription(final String description) {
+	this.description = description;
     }
 
-    public String getDescription() {
-        return description;
+    public void setName(final String name) {
+	this.name = name;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setPermission(final String permission) {
+	this.permission = permission;
+    }
+
+    public void setUsage(final String usage) {
+	this.usage = usage;
     }
 }
